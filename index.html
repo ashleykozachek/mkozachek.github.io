@@ -101,7 +101,8 @@
                 }
             }
             else {
-                for (let word of Array.from(value[0])){
+                for (let i = 0; I < value[0].length; i++){
+                    let word = value[0][i];
                     if (word === this.textDiv.textContent.toLowerCase()){
                         value[1] = value[1] + 1;
                         value[2] = value[2] + 1;
