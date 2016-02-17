@@ -15,6 +15,7 @@
     var Z = 90;
     var BACKSPACE = 8;
     var ENTER = 13;
+    var SPACEBAR = 32;
     
     var hiraganaMap = new Map([["\u3042",["a",0,0]],["\u3044",["i",0,0]],["\u3046",["u",0,0]],["\u3048",["e",0,0]],["\u304a",["o",0,0]],
                             ["\u304b",["ka",0,0]],["\u304d",["ki",0,0]],["\u304f",["ku",0,0]],["\u3051",["ke",0,0]],["\u3053",["ko",0,0]],
@@ -79,7 +80,7 @@
             }
             else if (keyCode >= A && keyCode <= Z){
                 this.textDiv.textContent = text.concat(String.fromCharCode(keyCode)); }
-            else if (keyCode === ENTER && text.length > 0) { 
+            else if ((keyCode === ENTER || keyCode === SPACEBAR) && text.length > 0) { 
                 this.checkAnswer();
                 this.currentIteration = this.currentIteration + 1;
                 this.checkIteration();
