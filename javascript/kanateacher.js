@@ -26,6 +26,8 @@ var fullKanas = new Map();*/
 var Manager = {
 
     tabLinks: new Array(),
+
+    currentState: new Object(),
     
     onTabSwitchEvent: function(event){
         let atl = "activeTabLink";
@@ -45,6 +47,10 @@ var Manager = {
         tablist.forEach(function(tab){
             Manager.tabLinks.push(tab);
         });
+    },
+
+    changeState: function(state){
+
     },
 };
 
