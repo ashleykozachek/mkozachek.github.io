@@ -40,6 +40,7 @@ var Manager = {
        
         for (allTab in TabEnum){
             TabEnum[allTab].classList.remove(atl);
+            TabEnum[allTab].classList.add(iatl);
         }
 
         tab.classList.add(atl);
