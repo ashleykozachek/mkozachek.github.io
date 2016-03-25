@@ -23,45 +23,52 @@ var katakanaMap = new Map();
 var katakanaWithModMap = new Map();
 var fullKanas = new Map();*/
 
-var Manager = {
-
-    tabLinks: new Array(),
-    
-    onTabSwitchEvent: function(event){
-        let atl = "activeTabLink";
-        let iatl = "inactiveTabLink";
-        console.log(event.target);
-        this.tabLinks.forEach(function(tab){
-            tab.classList.remove(atl);
-            tab.classList.add(iatl);
-        });
-        event.target.classList.add(atl);
-        event.target.classList.remove(iatl);
-        console.log(event.target);
-    },
-
-    init: function(tablist){
-        console.log(tablist)
-        tablist.forEach(function(tab){
-            Manager.tabLinks.push(tab);
-        });
-    },
+var TabEnum = {
+    MAINTAB: document.getElementById('mainTabLink'),
+    GAMETAB: document.getElementById('gameTabLink'),
+    TRANSLITTAB: document.getElementById('translitTabLink'),
+    OPTIONSTAB: document.getElementById('optionsTabLink'),
 };
 
-function init(){
-    let mainTabLink = document.getElementById('mainTabLink');
-    let gameTabLink = document.getElementById('gameTabLink');
-    let translitTabLink = document.getElementById('translitTabLink');
-    let optionsTabLink = document.getElementById('optionsTabLink');
+var Manager = {
+
+    currentState: BlankState,
     
+    onTabSwitchEvent: function(event, tab){
+        let atl = "activeTabLink";
+        let iatl = "inactiveTabLink";
+       
+        for (allTab in TabEnum){
+            TabEnum[allTab].classList.remove(atl);
+        }
 
-    Manager.init([mainTabLink,gameTabLink,translitTabLink,optionsTabLink])
+        tab.classList.add(atl);
+        tab.classList.remove(iatl);
+        this.changeState(tab);
+    },
 
-    window.addEventListener('keydown', function(event) { Game.onKeydown(event); }, false);
-    mainTabLink.addEventListener('click',function(event) { Manager.onTabSwitchEvent(event); }, true);
-    gameTabLink.addEventListener('click',function(event) { Manager.onTabSwitchEvent(event); }, true);
-    translitTabLink.addEventListener('click',function(event) { Manager.onTabSwitchEvent(event); }, true);
-    optionsTabLink.addEventListener('click',function(event) { Manager.onTabSwitchEvent(event); }, true);
+    changeState: function(tab){
+        switch(tab){
+            case TabEnum.GAMETAB:
+                this.currentState = Game;
+                break;
+            default:
+                this.currentState = BlankState;
+        }
+    },
+
+    onKeydown: function(event){
+        this.currentState.onKeydown(event);
+    }
+
+};
+
+function init(){   
+    window.addEventListener('keydown', function(event) { Manager.onKeydown(event); }, false);
+    TabEnum.MAINTAB.addEventListener('click',function(event) { Manager.onTabSwitchEvent(event, TabEnum.MAINTAB); }, true);
+    TabEnum.GAMETAB.addEventListener('click',function(event) { Manager.onTabSwitchEvent(event, TabEnum.GAMETAB); }, true);
+    TabEnum.TRANSLITTAB.addEventListener('click',function(event) { Manager.onTabSwitchEvent(event, TabEnum.TRANSLITTAB); }, true);
+    TabEnum.OPTIONSTAB.addEventListener('click',function(event) { Manager.onTabSwitchEvent(event, TabEnum.OPTIONSTAB); }, true);
 }
     
 function kanaMapSemiSort(kanaMap){
@@ -82,7 +89,11 @@ function toggleClass(elId, classId){
     document.getElementById(elId).classList.toggle(classId);
 }
 
-
+var BlankState = {
+    onKeydown: function(event){
+        console.log(event);
+    }
+}
 
 var Game = {
     kanaDiv: document.getElementById("kanaDiv"),
@@ -95,7 +106,6 @@ var Game = {
     
     init: function(){
         this.kanaList = kanaMapSemiSort(hiraganaMap); //hardcode this for now but add choice later when it's made all pretty-like and stuff.
-        console.log(this.kanaList);
         this.listHalfLen = this.kanaList.length / 4;
         this.currentKana = this.kanaList[0][0];
         this.kanaDiv.textContent = this.currentKana;
@@ -104,7 +114,6 @@ var Game = {
     
     reset: function(){
         this.kanaList = kanaMapSemiSort(hiraganaMap); //hardcode this for now but add choice later when it's made all pretty-like and stuff.
-        console.log(this.kanaList);
         this.currentIteration = 0;
         this.currentKana = this.kanaList[0][0];
         this.kanaDiv.textContent = this.currentKana;
