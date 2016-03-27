@@ -1,6 +1,6 @@
 var randomValue = 6;
-var correctnessValue = 3;
-var occurrenceCost = 5;
+var correctnessValue = 5;
+var occurrenceCost = 3;
 var A = 65;
 var Z = 90;
 var BACKSPACE = 8;
@@ -51,6 +51,8 @@ var Manager = {
 
     currentState: BlankState,
     optionsVisited: false,
+    optionsChanged: false,
+    optionsHash: 1,
     
     onTabSwitchEvent: function(event, tab){
         let atl = "activeTabLink";
@@ -67,17 +69,27 @@ var Manager = {
     },
 
     changeState: function (tab) {
+        
         if (this.optionsVisited) {
-            if (!Options.atLeastOneChecked()) {
-                Options.hiraganaCb.checked = true;
-                alert('Warning: At least one option for a Kana must be selected. Defaulting to Hiragana.');
+            let newHash = Options.getHash();
+            if (newHash !== this.optionsHash){
+                if (! (newHash > 0)) {
+                    Options.hiraganaCb.checked = true;
+                    newHash = 1;
+                    alert('Warning: At least one option for a Kana must be selected. Defaulting to Hiragana.');
+                }
+                this.optionsChanged = true;
+                this.optionsHash = newHash;
             }
             this.optionsVisited = false;
         }
         switch(tab){
             case TabEnum.GAMETAB:
                 this.currentState = Game;
-                this.currentState.init();
+                if (this.optionsChanged) {
+                    this.currentState.init();
+                    this.optionsChanged = false;
+                }
                 break;
             case TabEnum.OPTIONSTAB:
                 this.optionsVisited = true;
@@ -127,16 +139,17 @@ var Game = {
     init: function(){
         this.currentMap = new Map();
         this.kanaList = new Array();
-        if(Options.hiraganaCb.checked){
+        let optionsHash = Manager.optionsHash;
+        if((optionsHash & 1) > 0){
             hiraganaMap.forEach(Game.concatMap);
         }
-        if(Options.modHiraganaCb.checked){
+        if((optionsHash & 2) > 0){
             hiraganaWithModMap.forEach(Game.concatMap);
         }
-        if(Options.katakanaCb.checked){
+        if((optionsHash & 4) > 0){
             katakanaMap.forEach(Game.concatMap);
         }
-        if(Options.modKatakanaCb.checked){
+        if((optionsHash & 8) > 0){
             katakanaWithModMap.forEach(Game.concatMap);
         }
 
@@ -257,9 +270,14 @@ var Options = {
     katakanaCb: document.getElementById("katakanaCb"),
     modKatakanaCb: document.getElementById("modKatakanaCb"),
 
-    atLeastOneChecked: function(){
-        if (this.hiraganaCb.checked || this.modHiraganaCb.checked || this.katakanaCb.checked || this.modKatakanaCb.checked){ return true; }
-        return false;
+    getHash: function () {
+        let newHash = 0;
+        if (this.hiraganaCb.checked) { newHash = 1; }
+        if (this.modHiraganaCb.checked) { newHash += 2; }
+        if (this.katakanaCb.checked) { newHash += 4; }
+        if (this.modKatakanaCb.checked) { newHash += 8; }
+
+        return newHash;
     },
 };
 
