@@ -55,8 +55,8 @@ var Manager = {
     optionsHash: 1,
     
     onTabSwitchEvent: function(event, tab){
-        let atl = "activeTabLink";
-        let iatl = "inactiveTabLink";
+        var atl = "activeTabLink";
+        var iatl = "inactiveTabLink";
        
         for (allTab in TabEnum){
             TabEnum[allTab].classList.remove(atl);
