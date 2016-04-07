@@ -71,7 +71,7 @@ var Manager = {
     changeState: function (tab) {
         
         if (this.optionsVisited) {
-            let newHash = Options.getHash();
+            var newHash = Options.getHash();
             if (newHash !== this.optionsHash){
                 if (! (newHash > 0)) {
                     Options.hiraganaCb.checked = true;
@@ -139,7 +139,7 @@ var Game = {
     init: function(){
         this.currentMap = new Map();
         this.kanaList = new Array();
-        let optionsHash = Manager.optionsHash;
+        var optionsHash = Manager.optionsHash;
         if((optionsHash & 1) > 0){
             hiraganaMap.forEach(Game.concatMap);
         }
@@ -206,7 +206,7 @@ var Game = {
     },
     
     checkAnswer: function(){
-        let value = this.currentMap.get(this.kanaDiv.textContent);
+        var value = this.currentMap.get(this.kanaDiv.textContent);
         if (typeof value[0] === 'string'){
             if (value[0] === this.textDiv.textContent.toLowerCase()){
                 value[1] = value[1] + 1;
@@ -271,7 +271,7 @@ var Options = {
     modKatakanaCb: document.getElementById("modKatakanaCb"),
 
     getHash: function () {
-        let newHash = 0;
+        var newHash = 0;
         if (this.hiraganaCb.checked) { newHash = 1; }
         if (this.modHiraganaCb.checked) { newHash += 2; }
         if (this.katakanaCb.checked) { newHash += 4; }
